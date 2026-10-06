@@ -1,27 +1,19 @@
 #!/usr/bin/env bash
 
-set -e
-
-# Default variables
-HOST=""
-KEY=""
-USER="ubuntu"
-APP_NAME="my-app"
-APP_DIR="/var/www/${APP_NAME}"
-
-# Parse CLI flags (-h <HOST> -i <KEY>)
+# 1. Parse command line flags
 while getopts "h:i:" opt; do
-  case ${opt} in
-    h ) HOST=$OPTARG ;;
-    i ) KEY=$OPTARG ;;
-    \? ) echo "Usage: ./deploy/deploy.sh -h <PUBLIC-IP> -i <KEY-PATH>"; exit 1 ;;
+  case $opt in
+    h) HOST="$OPTARG" ;;
+    i) KEY_PATH="$OPTARG" ;;
+    *) exit 1 ;;
   esac
 done
 
-if [ -z "$HOST" ] || [ -z "$KEY" ]; then
-    echo "ERROR: Missing required arguments."
-    echo "Usage: ./deploy/deploy.sh -h <PUBLIC-IP> -i <KEY-PATH>"
-    exit 1
+# 2. Check if required arguments were provided
+if [ -z "$HOST" ] || [ -z "$KEY_PATH" ]; then
+  echo "ERROR: Missing required arguments."
+  echo "Usage: $0 -h <PUBLIC-IP> -i <KEY-PATH>"
+  exit 1
 fi
 
 echo "=== [Task 3] Deploying to ${HOST} ==="
@@ -29,33 +21,18 @@ echo "=== [Task 3] Deploying to ${HOST} ==="
 # 1. Run local test suite
 echo "[1/4] Running local tests..."
 if [ -d "venv" ]; then
-    source venv/bin/activate
+    if [ -f "venv/Scripts/activate" ]; then source venv/Scripts/activate; else source venv/bin/activate; fi
     pytest
 else
     python3 -m pytest
 fi
 
-# 2. Sync project code using rsync
 echo "[2/4] Syncing files to server..."
-rsync -avz -e "ssh -i ${KEY} -o StrictHostKeyChecking=no" \
-    --exclude 'venv' \
-    --exclude '__pycache__' \
-    --exclude '.git' \
-    --exclude '*.db' \
-    --exclude '.pytest_cache' \
-    ./ "${USER}@${HOST}:${APP_DIR}/"
+scp -i "$KEY_PATH" -r app.py requirements.txt deploy ubuntu@"$HOST":/var/www/my-app/
 
-# 3. Remote build & restart application
+# [3/4] Installing remote dependencies & restarting service...
 echo "[3/4] Installing remote dependencies & restarting service..."
-ssh -i "${KEY}" -o StrictHostKeyChecking=no "${USER}@${HOST}" << EOF
-    set -e
-    cd ${APP_DIR}
-    if [ ! -d "venv" ]; then
-        python3 -m venv venv
-    fi
-    ./venv/bin/pip install --quiet -r requirements.txt
-    sudo systemctl restart ${APP_NAME}
-EOF
+ssh -i "$KEY_PATH" ubuntu@"$HOST" "cd /var/www/my-app && ./venv/bin/pip install -r requirements.txt && sudo systemctl restart my-app && sudo systemctl restart nginx"
 
 # 4. Verify deployment via Health Check
 echo "[4/4] Verifying health check endpoint..."
