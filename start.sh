@@ -106,7 +106,7 @@ HOST=${HOST:-127.0.0.1}
 URL="http://${HOST}:${PORT}"
 
 export FLASK_APP=${FLASK_APP:-app.py}
-export FLASK_DEBUG=${FLASK_DEBUG:-1}
+export FLASK_DEBUG=${FLASK_DEBUG:-0}
 
 echo "[4/4] Starting Flask server on ${URL}..."
 echo "=================================================="
