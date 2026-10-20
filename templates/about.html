@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}About Us{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">About {{ firm.name }}</p>
+    <h1>A small firm that does one thing well</h1>
+    <p class="lead mt-3">We focus only on Social Security disability claims, for the people who are most often left to navigate the system alone.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="row g-5 align-items-start">
+      <div class="col-md-4">
+        <img class="portrait" src="{{ url_for('static', filename='img/attorney-placeholder.svg') }}"
+             alt="Placeholder for a photo of the firm's lead attorney" width="400" height="480">
+        <p class="small text-center mt-2 mb-0">Attorney photo coming soon</p>
+      </div>
+      <div class="col-md-8">
+        <h2>Our attorney</h2>
+        {# Replace with the attorney's real name, bar admissions, and background once supplied by the firm. #}
+        <p>Our lead attorney founded {{ firm.name }} in {{ firm.city }} after seeing how many hard-working people gave up on disability claims they should have won. The firm grew out of a simple idea: someone who spent decades lifting, building, and hauling deserves a lawyer who understands that work, and who explains every step in plain language.</p>
+        <p>Every client works directly with the attorney and a dedicated legal assistant. We gather medical records, prepare written arguments, get you ready for hearings, and stay in touch so you always know where your claim stands.</p>
+
+        <h2 class="mt-5">How we work</h2>
+        <div class="row g-4 mt-1">
+          <div class="col-sm-6">
+            <h3><i class="bi bi-globe-americas text-secondary" aria-hidden="true"></i> Remote, nationwide</h3>
+            <p class="mb-0">Disability claims are decided under federal rules, so we can represent you in any state. Meetings happen by phone or video, and documents travel by mail or secure upload.</p>
+          </div>
+          <div class="col-sm-6">
+            <h3><i class="bi bi-person-check text-secondary" aria-hidden="true"></i> Focused on who we serve best</h3>
+            <p class="mb-0">We concentrate on older workers leaving physical labor and families of disabled children. If we aren't the right fit, we'll tell you quickly and point you to help.</p>
+          </div>
+        </div>
+
+        <h2 class="mt-5">What we believe</h2>
+        <ul class="mt-3">
+          <li><strong>Your work history matters.</strong> Years of physical labor are evidence, not just background.</li>
+          <li><strong>Clear answers beat legal jargon.</strong> You should understand every letter you receive.</li>
+          <li><strong>Families deserve patience.</strong> Caring for a disabled child is already a full-time job; we do the paperwork.</li>
+          <li><strong>No one should pay to ask a question.</strong> Case reviews are free, and fees are paid only if you win.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-paper">
+  <div class="container">
+    <div class="cta-band d-md-flex align-items-center justify-content-between gap-4">
+      <div>
+        <h2 class="mb-2">Let's talk about your situation</h2>
+        <p class="mb-md-0">A short case review tells us whether we can help, at no cost.</p>
+      </div>
+      <a class="btn btn-accent btn-lg flex-shrink-0" href="{{ url_for('intake') }}">Start free case review</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

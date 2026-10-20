@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Resource Center{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Resource Center</p>
+    <h1>Help beyond our office</h1>
+    <p class="lead mt-3">Whether or not we take your case, these free and official resources can help with applications, legal questions, work, and family support.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="row g-4">
+      {% for group in resources %}
+      <div class="col-lg-4">
+        <div class="info-card">
+          <div class="icon"><i class="bi {{ group.icon }}" aria-hidden="true"></i></div>
+          <h2 class="h3">{{ group.group }}</h2>
+          <ul class="list-unstyled resource-list mb-0">
+            {% for title, url, desc in group.links %}
+            <li>
+              <a href="{{ url }}" target="_blank" rel="noopener">{{ title }} <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i><span class="visually-hidden"> (opens in a new tab)</span></a>
+              <div class="small">{{ desc }}</div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="alert alert-light border mt-5 d-flex gap-3 align-items-start" role="note">
+      <i class="bi bi-exclamation-triangle fs-4 text-warning" aria-hidden="true"></i>
+      <div>
+        <strong>In a crisis?</strong> Call or text <a href="tel:988">988</a> for the Suicide &amp; Crisis Lifeline, or call 911 in an emergency.
+      </div>
+    </div>
+    <p class="small">These links go to outside organizations. {{ firm.name }} is not affiliated with them and is not responsible for their content.</p>
+  </div>
+</section>
+{% endblock %}

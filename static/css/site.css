@@ -1,0 +1,128 @@
+/* Aplin Law — site styles layered on Bootstrap 5.
+   Larger type and strong contrast on purpose: many visitors are 50+. */
+:root {
+  --ink: #1d2b3a;          /* primary navy */
+  --ink-soft: #3b4a5a;
+  --clay: #b4532a;         /* accent, 5.2:1 on white */
+  --clay-dark: #8f3f1e;
+  --paper: #f7f4ee;        /* warm background */
+  --sage: #e5ebe3;
+  --line: #d9d3c7;
+
+  --bs-body-font-family: "Atkinson Hyperlegible", system-ui, sans-serif;
+  --bs-body-font-size: 1.125rem;
+  --bs-body-line-height: 1.65;
+  --bs-body-color: var(--ink);
+  --bs-body-bg: #fff;
+  --bs-link-color-rgb: 143, 63, 30;
+  --bs-link-hover-color-rgb: 29, 43, 58;
+}
+
+h1, h2, h3, .display-5, .brand-text {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+h1 { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.15; }
+h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); }
+h3 { font-size: 1.3rem; }
+.lead { font-size: 1.3rem; color: var(--ink-soft); }
+
+a { text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--clay); outline-offset: 2px; }
+
+.skip-link { position: absolute; left: 1rem; top: 1rem; z-index: 2000; background: #fff; padding: .5rem 1rem; }
+
+/* Header */
+.topbar { background: var(--ink); color: #e9edf1; font-size: .95rem; }
+.topbar a { color: #fff; text-decoration: none; font-weight: 700; }
+.site-header { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 1030; }
+.brand-text { font-size: 1.55rem; color: var(--ink); }
+.brand-text span { color: var(--clay); }
+.navbar .nav-link { color: var(--ink); font-weight: 700; padding: .5rem .75rem !important; border-radius: .375rem; }
+.navbar .nav-link:hover { background: var(--paper); }
+.navbar .nav-link.active { color: var(--clay-dark); box-shadow: inset 0 -3px 0 var(--clay); border-radius: 0; }
+
+/* Buttons */
+.btn { font-weight: 700; padding: .7rem 1.35rem; border-radius: .5rem; }
+.btn-accent { background: var(--clay); color: #fff; border: 2px solid var(--clay); }
+.btn-accent:hover, .btn-accent:focus { background: var(--clay-dark); border-color: var(--clay-dark); color: #fff; }
+.btn-outline-ink { border: 2px solid var(--ink); color: var(--ink); background: transparent; }
+.btn-outline-ink:hover { background: var(--ink); color: #fff; }
+.btn-lg { font-size: 1.2rem; padding: .9rem 1.75rem; }
+
+/* Sections */
+.section { padding: 4.5rem 0; }
+.section-paper { background: var(--paper); }
+.section-sage { background: var(--sage); }
+.eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: .85rem; font-weight: 700; color: var(--clay-dark); }
+
+.page-hero { background: var(--paper); border-bottom: 1px solid var(--line); padding: 3.5rem 0 3rem; }
+.page-hero .lead { max-width: 46rem; }
+
+/* Home hero */
+.hero { background: linear-gradient(180deg, var(--paper) 0%, #fff 100%); padding: 4.5rem 0 4rem; }
+.hero-card { background: var(--ink); color: #f1f3f5; border-radius: 1rem; padding: 2rem; }
+.hero-card h2 { color: #fff; font-size: 1.4rem; }
+.hero-card li { margin-bottom: .6rem; }
+.hero-card .bi { color: #f0a77f; }
+
+/* Cards */
+.info-card { background: #fff; border: 1px solid var(--line); border-radius: .875rem; padding: 1.75rem; height: 100%; }
+.info-card .icon {
+  width: 3rem; height: 3rem; border-radius: .75rem; display: grid; place-items: center;
+  background: var(--sage); color: var(--ink); font-size: 1.5rem; margin-bottom: 1rem;
+}
+.info-card h3 { margin-bottom: .5rem; }
+
+/* Stage timeline */
+.stages { list-style: none; padding: 0; margin: 0; counter-reset: stage; }
+.stage { position: relative; padding: 0 0 2rem 4.25rem; }
+.stage::before {
+  counter-increment: stage; content: counter(stage);
+  position: absolute; left: 0; top: 0; width: 2.75rem; height: 2.75rem; border-radius: 50%;
+  background: var(--ink); color: #fff; display: grid; place-items: center;
+  font-family: "Source Serif 4", Georgia, serif; font-weight: 700; font-size: 1.2rem;
+}
+.stage::after { content: ""; position: absolute; left: 1.33rem; top: 2.9rem; bottom: .3rem; width: 2px; background: var(--line); }
+.stage:last-child::after { display: none; }
+.stage h3 { margin-bottom: .35rem; }
+.tip { background: var(--paper); border-left: 4px solid var(--clay); padding: .75rem 1rem; border-radius: 0 .5rem .5rem 0; font-size: 1rem; }
+
+.stage-strip { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; padding: 0; }
+.stage-strip li { background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: .4rem 1rem; font-weight: 700; font-size: 1rem; }
+.stage-strip li span { color: var(--clay-dark); margin-right: .35rem; }
+
+/* Steps (How Social Security Works) */
+.step-num { font-family: "Source Serif 4", Georgia, serif; font-size: 2.5rem; line-height: 1; color: var(--clay); font-weight: 700; }
+
+/* Resources */
+.resource-list a { font-weight: 700; }
+.resource-list li { padding: 1rem 0; border-bottom: 1px solid var(--line); }
+.resource-list li:last-child { border-bottom: 0; }
+
+/* Forms */
+.form-control, .form-select { font-size: 1.125rem; padding: .75rem 1rem; border-color: #b9b2a5; }
+.form-label { font-weight: 700; }
+
+/* Callout band */
+.cta-band { background: var(--ink); color: #e9edf1; border-radius: 1rem; padding: 2.5rem; }
+.cta-band h2 { color: #fff; }
+
+/* Attorney photo placeholder */
+.portrait { border-radius: 1rem; width: 100%; height: auto; background: var(--sage); }
+
+/* Footer */
+.site-footer { background: #15202b; color: #c9d1d9; }
+.site-footer a { color: #fff; }
+.site-footer .brand-text { color: #fff; }
+.site-footer .brand-text span { color: #f0a77f; }
+.footer-heading { font-size: 1rem; text-transform: uppercase; letter-spacing: .1em; color: #fff; font-family: inherit; }
+.site-footer li { margin-bottom: .45rem; }
+.footer-bottom { border-top: 1px solid #2c3a48; font-size: .95rem; }
+
+@media (max-width: 991.98px) {
+  .navbar .nav-link.active { box-shadow: inset 4px 0 0 var(--clay); }
+  .section { padding: 3rem 0; }
+}

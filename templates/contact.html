@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Contact Us{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Contact Us</p>
+    <h1>Questions? We're glad to hear from you.</h1>
+    <p class="lead mt-3">Send a general question here. To have us look at a specific claim, the <a href="{{ url_for('intake') }}">free case review</a> is the faster route.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-7">
+        <form method="post" action="{{ url_for('contact') }}" novalidate>
+          {% if errors %}
+          <div class="alert alert-danger" role="alert">
+            Please fix the {{ errors|length }} item{{ 's' if errors|length > 1 }} marked below.
+          </div>
+          {% endif %}
+          <div class="mb-4">
+            <label for="name" class="form-label">Your name</label>
+            <input type="text" class="form-control{% if errors.name %} is-invalid{% endif %}" id="name" name="name"
+                   value="{{ form.name }}" maxlength="100" autocomplete="name" required
+                   {% if errors.name %}aria-describedby="name-error"{% endif %}>
+            {% if errors.name %}<div class="invalid-feedback" id="name-error">{{ errors.name }}</div>{% endif %}
+          </div>
+          <div class="mb-4">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" class="form-control{% if errors.email %} is-invalid{% endif %}" id="email" name="email"
+                   value="{{ form.email }}" maxlength="120" autocomplete="email" required
+                   {% if errors.email %}aria-describedby="email-error"{% endif %}>
+            {% if errors.email %}<div class="invalid-feedback" id="email-error">{{ errors.email }}</div>{% endif %}
+          </div>
+          <div class="mb-4">
+            <label for="message" class="form-label">Your message</label>
+            <textarea class="form-control{% if errors.message %} is-invalid{% endif %}" id="message" name="message"
+                      rows="6" required {% if errors.message %}aria-describedby="message-error"{% endif %}>{{ form.message }}</textarea>
+            {% if errors.message %}<div class="invalid-feedback" id="message-error">{{ errors.message }}</div>{% endif %}
+            <div class="form-text">Please don't include Social Security numbers or medical records here.</div>
+          </div>
+          <button type="submit" class="btn btn-accent btn-lg">Send message</button>
+        </form>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="info-card">
+          <h2 class="h3">Other ways to reach us</h2>
+          <ul class="list-unstyled mt-3">
+            <li class="mb-3"><i class="bi bi-telephone me-2" aria-hidden="true"></i><a href="tel:{{ firm.phone_href }}">{{ firm.phone }}</a></li>
+            <li class="mb-3"><i class="bi bi-envelope me-2" aria-hidden="true"></i><a href="mailto:{{ firm.email }}">{{ firm.email }}</a></li>
+            <li class="mb-3"><i class="bi bi-clock me-2" aria-hidden="true"></i>{{ firm.hours }}</li>
+            <li><i class="bi bi-geo-alt me-2" aria-hidden="true"></i>Based in {{ firm.city }}; meetings by phone or video nationwide</li>
+          </ul>
+          <hr>
+          <p class="small mb-0">Sending a message does not make us your lawyer, so please don't wait on us if you have an appeal deadline coming up. Call instead.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Social Security Disability Lawyers{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-7">
+        <p class="eyebrow">Social Security Disability &middot; SSDI &amp; SSI</p>
+        <h1>When your body can't do the work anymore, we help you get the benefits you earned.</h1>
+        <p class="lead mt-3">{{ firm.name }} represents workers 50 and older leaving physical jobs after an injury or illness, and families caring for a disabled child or adult child. We handle claims at every stage, anywhere in the country.</p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          <a class="btn btn-accent btn-lg" href="{{ url_for('intake') }}">Start your free case review</a>
+          <a class="btn btn-outline-ink btn-lg" href="tel:{{ firm.phone_href }}"><i class="bi bi-telephone" aria-hidden="true"></i> Call {{ firm.phone }}</a>
+        </div>
+        <p class="mt-3 mb-0 small">No fee unless you win. Social Security must approve any fee before it is paid.</p>
+      </div>
+      <div class="col-lg-5">
+        <div class="hero-card">
+          <h2>We may be a good fit if…</h2>
+          <ul class="list-unstyled mt-3 mb-0">
+            <li><i class="bi bi-check2-circle" aria-hidden="true"></i> You are 50 or older and can no longer do the physical work you've done for years</li>
+            <li><i class="bi bi-check2-circle" aria-hidden="true"></i> Your condition is expected to last at least a year</li>
+            <li><i class="bi bi-check2-circle" aria-hidden="true"></i> You care for a child or adult child with a disability</li>
+            <li><i class="bi bi-check2-circle" aria-hidden="true"></i> You applied and were denied, or a deadline is coming up</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="mb-4">Who we help</h2>
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="info-card">
+          <div class="icon"><i class="bi bi-tools" aria-hidden="true"></i></div>
+          <h3>Workers 50 and older</h3>
+          <p>Construction, warehouse, trucking, farm, factory, and healthcare workers whose injuries or health conditions make physical work impossible. Social Security's rules give more weight to age, education, and work history once you turn 50, and we know how to use them.</p>
+          <a href="{{ url_for('practice_areas') }}#ssdi">How SSDI works for older workers <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="info-card">
+          <div class="icon"><i class="bi bi-house-heart" aria-hidden="true"></i></div>
+          <h3>Families with disabled children</h3>
+          <p>SSI for children with serious conditions, and Childhood Disability Benefits for adult children whose disability began before age 22. We help parents gather school, medical, and therapy records that tell the full story.</p>
+          <a href="{{ url_for('practice_areas') }}#children">Benefits for children and adult children <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-paper">
+  <div class="container">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-5">
+        <h2>Five stages. We can step in at any of them.</h2>
+        <p>Most disability claims are denied the first time. A denial is not the end, and each appeal is a chance to add evidence and tell your story more clearly.</p>
+        <a class="btn btn-outline-ink" href="{{ url_for('practice_areas') }}">See what happens at each stage</a>
+      </div>
+      <div class="col-lg-7">
+        <ol class="stage-strip" aria-label="Stages of a disability claim">
+          {% for s in stages %}<li><span>{{ loop.index }}</span>{{ s.name }}</li>{% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="info-card">
+          <div class="icon"><i class="bi bi-laptop" aria-hidden="true"></i></div>
+          <h3>Nationwide, from home</h3>
+          <p class="mb-0">Social Security disability is federal law. We work by phone, video, and mail, so you never need to travel to see us.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="info-card">
+          <div class="icon"><i class="bi bi-chat-square-text" aria-hidden="true"></i></div>
+          <h3>Plain answers</h3>
+          <p class="mb-0">We explain every letter you get from Social Security, what it means, and what happens next. No legal jargon.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="info-card">
+          <div class="icon"><i class="bi bi-cash-coin" aria-hidden="true"></i></div>
+          <h3>No upfront cost</h3>
+          <p class="mb-0">Our fee comes only from past-due benefits if you win, and the amount is capped and approved by Social Security.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-band mt-5 d-md-flex align-items-center justify-content-between gap-4">
+      <div>
+        <h2 class="mb-2">Not sure if you qualify?</h2>
+        <p class="mb-md-0">Answer a few short questions. If your situation isn't one we handle, we'll point you to someone who can help.</p>
+      </div>
+      <a class="btn btn-accent btn-lg flex-shrink-0" href="{{ url_for('intake') }}">Begin free case review</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
