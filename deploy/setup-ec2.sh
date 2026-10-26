@@ -1,47 +1,41 @@
-#!/usr/bin/env bash
-# One-time setup of a fresh Ubuntu EC2 server. Run ON THE SERVER:
-#   sudo bash deploy/setup-ec2.sh
-set -euo pipefail
+#!/bin/bash
+# One-time server provisioning. Run from anywhere AFTER install.sh and configure.sh,
+# with SECRET_KEY, ADMIN_EMAIL and ADMIN_PASSWORD exported.
+set -e
 
-APP_NAME="my-app"
-APP_USER="ubuntu"
-APP_DIR="/var/www/${APP_NAME}"
-SYSTEMD_SERVICE="/etc/systemd/system/${APP_NAME}.service"
-NGINX_CONF="/etc/nginx/sites-available/${APP_NAME}"
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+APP_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+RUN_USER="$(id -un)"
 
-if [ "$(id -u)" -ne 0 ]; then
-  echo "ERROR: run this with sudo: sudo bash deploy/setup-ec2.sh"
-  exit 1
+if [ -z "$SECRET_KEY" ] || [ -z "$ADMIN_EMAIL" ] || [ -z "$ADMIN_PASSWORD" ]; then
+    echo "Error: export SECRET_KEY, ADMIN_EMAIL, and ADMIN_PASSWORD first."
+    exit 1
 fi
 
-echo "[1/6] Installing system dependencies..."
-apt-get update -y
-apt-get install -y python3 python3-pip python3-venv nginx rsync
+echo "=== Installing Nginx ==="
+sudo apt-get update
+sudo apt-get install -y nginx
 
-echo "[2/6] Creating app directory at ${APP_DIR}..."
-mkdir -p "${APP_DIR}"
-chown -R "${APP_USER}:${APP_USER}" "${APP_DIR}"
+echo "=== Writing Nginx site config (port 80 -> 127.0.0.1:8000) ==="
+sudo cp "$APP_DIR/deploy/nginx-aplin-law.conf" /etc/nginx/sites-available/aplin-law
+sudo ln -sf /etc/nginx/sites-available/aplin-law /etc/nginx/sites-enabled/aplin-law
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo nginx -t
+sudo systemctl reload nginx
 
-echo "[3/6] Creating Python virtual environment..."
-if [ ! -x "${APP_DIR}/venv/bin/python" ]; then
-  rm -rf "${APP_DIR}/venv"
-  sudo -u "${APP_USER}" python3 -m venv "${APP_DIR}/venv"
-fi
+echo "=== Writing /etc/aplin-law.env (mode 600) ==="
+esc() { printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g'; }
+sudo touch /etc/aplin-law.env
+sudo chmod 600 /etc/aplin-law.env
+{
+    printf 'SECRET_KEY="%s"\n'     "$(esc "$SECRET_KEY")"
+    printf 'ADMIN_EMAIL="%s"\n'    "$(esc "$ADMIN_EMAIL")"
+    printf 'ADMIN_PASSWORD="%s"\n' "$(esc "$ADMIN_PASSWORD")"
+} | sudo tee /etc/aplin-law.env > /dev/null
 
-echo "[4/6] Installing systemd service..."
-cp "${SCRIPT_DIR}/${APP_NAME}.service" "${SYSTEMD_SERVICE}"
-systemctl daemon-reload
-systemctl enable "${APP_NAME}"
+echo "=== Installing systemd service ==="
+sed -e "s|/home/ubuntu/aplin-law-portal|$APP_DIR|g" -e "s|^User=.*|User=$RUN_USER|" \
+    "$APP_DIR/deploy/aplin-law.service" | sudo tee /etc/systemd/system/aplin-law.service > /dev/null
+sudo systemctl daemon-reload
+sudo systemctl enable --now aplin-law
 
-echo "[5/6] Configuring nginx..."
-cp "${SCRIPT_DIR}/nginx-${APP_NAME}.conf" "${NGINX_CONF}"
-ln -sf "${NGINX_CONF}" /etc/nginx/sites-enabled/
-rm -f /etc/nginx/sites-enabled/default
-nginx -t
-
-echo "[6/6] Restarting nginx..."
-systemctl restart nginx
-systemctl enable nginx
-
-echo "=== EC2 setup complete! Now run ./deploy/deploy.sh from your laptop ==="
+echo "=== Done. Check: sudo systemctl status aplin-law ==="

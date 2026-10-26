@@ -1,0 +1,14 @@
+[Unit]
+Description=Aplin Law Portal (Gunicorn)
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/aplin-law-portal
+EnvironmentFile=/etc/aplin-law.env
+ExecStart=/home/ubuntu/aplin-law-portal/start.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
