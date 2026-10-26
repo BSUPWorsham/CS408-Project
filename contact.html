@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Contact Us{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Contact Us</h1></div></div>
+<section class="section">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-12 col-lg-7">
+        <p>Have a general question? Send us a message. For a claim review, the <a href="/intake">intake form</a> is the fastest route.</p>
+        <p class="notice">Please do not include sensitive medical or personal details here.</p>
+        <form method="post" novalidate>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="mb-3">
+            <label class="form-label" for="sender_name">Your name</label>
+            <input class="form-control {{ 'is-invalid' if errors.sender_name }}" id="sender_name" name="sender_name" maxlength="100" autocomplete="name" value="{{ form.sender_name }}" required {% if errors.sender_name %}aria-describedby="err_name"{% endif %}>
+            {% if errors.sender_name %}<div class="invalid-feedback" id="err_name">{{ errors.sender_name }}</div>{% endif %}
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="sender_email">Email address</label>
+            <input class="form-control {{ 'is-invalid' if errors.sender_email }}" type="email" id="sender_email" name="sender_email" maxlength="120" autocomplete="email" value="{{ form.sender_email }}" required {% if errors.sender_email %}aria-describedby="err_email"{% endif %}>
+            {% if errors.sender_email %}<div class="invalid-feedback" id="err_email">{{ errors.sender_email }}</div>{% endif %}
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="message">Message</label>
+            <textarea class="form-control {{ 'is-invalid' if errors.message }}" id="message" name="message" rows="6" required {% if errors.message %}aria-describedby="err_msg"{% endif %}>{{ form.message }}</textarea>
+            {% if errors.message %}<div class="invalid-feedback" id="err_msg">{{ errors.message }}</div>{% endif %}
+          </div>
+          <button class="btn btn-cta" type="submit">Send message</button>
+        </form>
+      </div>
+      <div class="col-12 col-lg-5">
+        <div class="panel">
+          <h3>Office</h3>
+          <address class="mb-0">
+            Aplin Law<br>Boise, Idaho<br>
+            <a href="tel:+12085550100">(208) 555-0100</a><br>
+            <a href="mailto:info@aplinlaw.com">info@aplinlaw.com</a>
+          </address>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

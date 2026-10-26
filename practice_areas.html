@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Practice Areas &amp; Stages{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container"><h1>Practice Areas &amp; Stages</h1></div></div>
+<section class="section">
+  <div class="container">
+    <h2>What we handle</h2>
+    <div class="row g-4 mt-1">
+      <div class="col-12 col-md-6">
+        <div class="panel">
+          <h3>SSDI: Social Security Disability Insurance</h3>
+          <p class="mb-0">For people who worked and paid Social Security taxes, then became unable to work because of a medical condition expected to last at least a year or result in death.</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="panel">
+          <h3>SSI: Supplemental Security Income</h3>
+          <p class="mb-0">A needs-based program for disabled adults and children with limited income and resources. It does not depend on a work record.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section section-tint">
+  <div class="container">
+    <h2 class="mb-4">The stages of a claim</h2>
+    <ol class="stage-list">
+      {% for name, text in stages %}
+      <li><h3 class="h5 mb-1">{{ name }}</h3><p class="mb-0">{{ text }}</p></li>
+      {% endfor %}
+    </ol>
+    <div class="notice mt-3"><strong>Deadlines are short.</strong> Most appeals must be filed within 60 days of the denial notice. If you received a denial, do not wait.</div>
+    <a class="btn btn-cta mt-4" href="/intake">Start your intake</a>
+  </div>
+</section>
+{% endblock %}

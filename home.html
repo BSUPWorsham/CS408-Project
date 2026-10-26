@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <h1>When your body can't do the job anymore, we help you claim the benefits you earned.</h1>
+    <p class="lead mt-3">Aplin Law represents workers over 50 leaving physical labor, and families caring for disabled children, in Social Security disability claims across the country.</p>
+    <div class="d-flex flex-wrap gap-3 mt-4">
+      <a class="btn btn-cta btn-lg" href="/intake">Start your intake</a>
+      <a class="btn btn-outline-light btn-lg" href="{{ url_for('public.how_social_security_works') }}">See how it works</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="mb-4">Who we help</h2>
+    <div class="row g-4">
+      <div class="col-12 col-md-6">
+        <div class="panel">
+          <h3><i class="bi bi-person-workspace" aria-hidden="true"></i> Workers 50 and older</h3>
+          <p class="mb-0">Years of lifting, driving, building, or caring for others can leave you unable to keep going. Age and work history change how Social Security weighs your claim, and we know how to present that.</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="panel">
+          <h3><i class="bi bi-people" aria-hidden="true"></i> Families of disabled children</h3>
+          <p class="mb-0">Whether your child is a minor or a disabled adult, SSI can provide steady support. We help families gather records and move through each stage.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-tint">
+  <div class="container">
+    <div class="row g-5 align-items-start">
+      <div class="col-12 col-lg-6">
+        <h2>Simple steps, no phone tag</h2>
+        <p>Our online intake asks a few plain questions at your own pace. If we can help, we save your answers and give you a summary you can download. If we are not the right fit, we point you to organizations that may be.</p>
+        <a class="btn btn-outline-spruce" href="/intake">Begin the intake</a>
+      </div>
+      <div class="col-12 col-lg-6">
+        <h2>Based in Boise, working nationwide</h2>
+        <p>Most disability claims are handled by mail, phone, and video. You do not need to live near our office to work with us.</p>
+        <a class="btn btn-outline-spruce" href="{{ url_for('public.about') }}">About the firm</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="mb-3">Learn before you decide</h2>
+    <div class="row g-4">
+      <div class="col-12 col-md-4"><a class="text-decoration-none" href="{{ url_for('public.practice_areas') }}"><div class="panel"><h3>Practice Areas &amp; Stages</h3><p class="mb-0 text-body">The five stages of a claim, from application to federal court.</p></div></a></div>
+      <div class="col-12 col-md-4"><a class="text-decoration-none" href="{{ url_for('public.how_social_security_works') }}"><div class="panel"><h3>How Social Security Works</h3><p class="mb-0 text-body">Medical eligibility, work credits, hearings, and appeals explained.</p></div></a></div>
+      <div class="col-12 col-md-4"><a class="text-decoration-none" href="{{ url_for('public.resources') }}"><div class="panel"><h3>Resource Center</h3><p class="mb-0 text-body">Legal aid, SSA portals, and Idaho disability resources.</p></div></a></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

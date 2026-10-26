@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Resource Center{% endblock %}
+{% block content %}
+<div class="page-header"><div class="container">
+  <h1>Resource Center</h1>
+  <p class="mb-0 mt-2">Legal aid, Social Security portals, and Idaho disability resources. We are not affiliated with these organizations.</p>
+</div></div>
+<section class="section">
+  <div class="container">
+    {% for group, links in resources.items() %}
+    <h2 class="{{ 'mt-5' if not loop.first }}">{{ group }}</h2>
+    <div class="row g-3 mt-1">
+      {% for name, url, desc in links %}
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="panel">
+          <h3 class="h5"><a href="{{ url }}" {% if url.startswith('http') %}target="_blank" rel="noopener noreferrer"{% endif %}>{{ name }}{% if url.startswith('http') %} <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i><span class="visually-hidden">(opens in a new tab)</span>{% endif %}</a></h3>
+          <p class="mb-0">{{ desc }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
