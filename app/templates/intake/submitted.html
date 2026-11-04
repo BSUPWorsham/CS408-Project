@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Intake Received{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-check-circle" aria-hidden="true"></i> We received your intake</h1>
+        <p class="mb-0 mt-2">Thank you. Your reference number is <strong>#{{ intake_id }}</strong>.</p>
+    </div>
+</div>
+<section class="section">
+    <div class="container">
+        <div class="panel">
+            <h2 class="h4">What happens next</h2>
+            <ol class="mb-0">
+                <li>A member of our team reviews your answers.</li>
+                <li>We contact you by phone or email within two business days.</li>
+                <li>If we can help, we explain the next steps and any deadlines in your claim.</li>
+            </ol>
+        </div>
+        <p class="notice mt-4 mb-0">If you have a Social Security appeal deadline in the next two weeks, call us at
+            <a href="tel:+12085550100">(208) 555-0100</a> so we don't miss it.</p>
+        <a class="btn btn-outline-spruce mt-4" href="{{ url_for('public.home') }}">Back to the home page</a>
+    </div>
+</section>
+{% endblock %}

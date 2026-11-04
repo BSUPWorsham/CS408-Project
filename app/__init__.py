@@ -41,8 +41,10 @@ def create_app(test_config=None):
     from app.public import public
     from app.auth import auth
     from app.admin import admin
+    from app.intake import intake
 
     app.register_blueprint(public)
+    app.register_blueprint(intake)
     app.register_blueprint(auth)
     app.register_blueprint(admin)
 

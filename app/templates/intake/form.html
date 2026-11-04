@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}Client Intake: {{ steps[step - 1] }}{% endblock %}
+
+{% macro text_field(name, label, type="text", autocomplete="", maxlength=None, hint="") %}
+<div class="mb-4">
+    <label class="form-label" for="{{ name }}">{{ label }}</label>
+    {% if hint %}<div class="form-text mt-0 mb-2" id="{{ name }}_hint">{{ hint }}</div>{% endif %}
+    <input class="form-control {{ 'is-invalid' if errors[name] }}" type="{{ type }}" id="{{ name }}" name="{{ name }}"
+           value="{{ data[name] }}" {% if autocomplete %}autocomplete="{{ autocomplete }}"{% endif %}
+           {% if maxlength %}maxlength="{{ maxlength }}"{% endif %} required
+           aria-describedby="{{ name ~ '_hint' if hint }} {{ name ~ '_error' if errors[name] }}">
+    {% if errors[name] %}<div class="invalid-feedback" id="{{ name }}_error">{{ errors[name] }}</div>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro textarea(name, label, hint="") %}
+<div class="mb-4">
+    <label class="form-label" for="{{ name }}">{{ label }}</label>
+    {% if hint %}<div class="form-text mt-0 mb-2" id="{{ name }}_hint">{{ hint }}</div>{% endif %}
+    <textarea class="form-control {{ 'is-invalid' if errors[name] }}" id="{{ name }}" name="{{ name }}" rows="7" maxlength="5000" required
+              aria-describedby="{{ name ~ '_hint' if hint }} {{ name ~ '_error' if errors[name] }}">{{ data[name] }}</textarea>
+    {% if errors[name] %}<div class="invalid-feedback" id="{{ name }}_error">{{ errors[name] }}</div>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro radios(name, legend, choices, hint="") %}
+<fieldset class="mb-4" {% if errors[name] %}aria-describedby="{{ name }}_error"{% endif %}>
+    <legend class="form-label fs-6">{{ legend }}</legend>
+    {% if hint %}<div class="form-text mt-0 mb-2">{{ hint }}</div>{% endif %}
+    {% for value, choice in choices.items() %}
+    {% set label = choice[0] if choice is not string else choice %}
+    <div class="form-check choice">
+        <input class="form-check-input {{ 'is-invalid' if errors[name] }}" type="radio" name="{{ name }}" id="{{ name }}_{{ value }}"
+               value="{{ value }}" {{ 'checked' if data[name] == value }} required>
+        <label class="form-check-label" for="{{ name }}_{{ value }}">{{ label }}</label>
+    </div>
+    {% endfor %}
+    {% if errors[name] %}<div class="text-danger small mt-1" id="{{ name }}_error">{{ errors[name] }}</div>{% endif %}
+</fieldset>
+{% endmacro %}
+
+{% set step_fields = {
+1: ["client_name", "client_email", "client_phone"],
+2: ["age_group", "long_term"],
+3: ["disability_details", "tried_accommodations"],
+4: ["case_summary"],
+5: [],
+} %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <p class="eyebrow mb-1">Free case review</p>
+        <h1>Client intake</h1>
+        <p class="mb-0 mt-2">A few plain questions, one page at a time. It takes about 10 minutes, and nothing is saved until you submit on the last page.</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container intake-wrap">
+        <ol class="intake-progress" aria-label="Intake progress">
+            {% for name in steps %}
+            <li class="{{ 'done' if loop.index < step }} {{ 'current' if loop.index == step }}"
+                {% if loop.index == step %}aria-current="step"{% endif %}>
+                <span class="num" aria-hidden="true">{{ loop.index }}</span>
+                <span class="label">{{ name }}</span>
+            </li>
+            {% endfor %}
+        </ol>
+        <p class="visually-hidden">Step {{ step }} of {{ steps|length }}: {{ steps[step - 1] }}</p>
+
+        {% if errors %}
+        <div class="alert alert-danger" role="alert" tabindex="-1" id="error-summary">
+            <p class="fw-bold mb-1">Please fix {{ errors|length }} {{ 'thing' if errors|length == 1 else 'things' }} on this page:</p>
+            <ul class="mb-0">
+                {% set anchors = {"age_group": "age_group_under_50", "long_term": "long_term_yes", "tried_accommodations": "tried_accommodations_yes"} %}
+                {% for field, message in errors.items() %}<li><a href="#{{ anchors.get(field, field) }}">{{ message }}</a></li>{% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <form method="post" action="{{ url_for('intake.start') }}" novalidate class="panel intake-panel">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="step" value="{{ step }}">
+            {# Pressing Enter submits the form's first button, so make that "Continue", not Back or Edit. #}
+            <button type="submit" name="action" value="next" class="visually-hidden" tabindex="-1" aria-hidden="true">Continue</button>
+            {# Answers from the other steps ride along as hidden fields. #}
+            {% for name in fields if name not in step_fields[step] %}
+            <input type="hidden" name="{{ name }}" value="{{ data[name] }}">
+            {% endfor %}
+
+            <h2 class="h3 mb-4">Step {{ step }} of {{ steps|length }}: {{ steps[step - 1] }}</h2>
+
+            {% if step == 1 %}
+            {{ text_field("client_name", "Full name", autocomplete="name", maxlength=100) }}
+            {{ text_field("client_email", "Email address", type="email", autocomplete="email", maxlength=120,
+            hint="We'll use this to send you a copy of your answers.") }}
+            {{ text_field("client_phone", "Phone number", type="tel", autocomplete="tel", maxlength=20,
+            hint="Include your area code.") }}
+
+            {% elif step == 2 %}
+            {{ radios("age_group", "Which of these describes you?", age_groups) }}
+            {{ radios("long_term", "Is the injury or condition expected to last at least 12 months?", duration_choices,
+            hint="Social Security only pays disability for long-term conditions. If you're not sure, that's okay.") }}
+
+            {% elif step == 3 %}
+            {{ textarea("disability_details", "Describe the injury or condition",
+            hint="What happened, your diagnosis if you have one, and how it limits lifting, standing, walking, or daily tasks. For a child, describe how it affects school and daily life.") }}
+            {{ radios("tried_accommodations", "Have you tried accommodations at work or school?", yes_no,
+            hint="For example: lighter duty, fewer hours, a different role, or an IEP or 504 plan at school.") }}
+
+            {% elif step == 4 %}
+            {{ textarea("case_summary", "Tell us about your situation",
+            hint="Your work history (the jobs you've done and for how long), when you stopped working, and whether you've already applied or been denied.") }}
+
+            {% else %}
+            <p>Check your answers. Use <strong>Edit</strong> to change anything before you submit.</p>
+            {% set summary = [
+            (1, "Contact", [("Name", data.client_name), ("Email", data.client_email), ("Phone", data.client_phone)]),
+            (2, "Situation", [("Who is applying", age_groups[data.age_group][0] if data.age_group in age_groups else ""),
+            ("Lasts 12+ months", duration_choices.get(data.long_term, ""))]),
+            (3, "Condition", [("Injury or condition", data.disability_details),
+            ("Tried accommodations", yes_no.get(data.tried_accommodations, ""))]),
+            (4, "Your story", [("Summary", data.case_summary)]),
+            ] %}
+            {% for num, title, rows in summary %}
+            <div class="review-block">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="h5 mb-2">{{ title }}</h3>
+                    <button class="btn btn-link p-0" type="submit" name="action" value="edit-{{ num }}" formnovalidate>
+                        Edit<span class="visually-hidden"> {{ title }}</span>
+                    </button>
+                </div>
+                <dl class="row mb-0">
+                    {% for label, value in rows %}
+                    <dt class="col-sm-4">{{ label }}</dt>
+                    <dd class="col-sm-8 review-value">{{ value }}</dd>
+                    {% endfor %}
+                </dl>
+            </div>
+            {% endfor %}
+            <p class="notice mt-3 mb-0">Submitting this form does not make Aplin Law your lawyer. We will review your answers and contact you within two business days.</p>
+            {% endif %}
+
+            <div class="d-flex flex-wrap gap-3 mt-4 pt-3 border-top">
+                {% if step > 1 %}
+                <button class="btn btn-outline-spruce" type="submit" name="action" value="back" formnovalidate>
+                    <i class="bi bi-arrow-left" aria-hidden="true"></i> Back
+                </button>
+                {% endif %}
+                <button class="btn btn-cta ms-auto" type="submit" name="action" value="next">
+                    {% if step == steps|length %}Submit my intake{% else %}Continue <i class="bi bi-arrow-right" aria-hidden="true"></i>{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+{% if errors %}
+<script>document.getElementById("error-summary").focus();</script>
+{% endif %}
+{% endblock %}
