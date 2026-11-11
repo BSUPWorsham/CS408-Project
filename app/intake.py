@@ -19,12 +19,15 @@ visitor to the not-a-fit page with outside resources instead:
                               disabled children)
     * condition will NOT last 12 months  (Social Security's duration rule)
 """
+import os
 import re
 
-from flask import Blueprint, abort, redirect, render_template, request, session, url_for
+from flask import (Blueprint, abort, current_app, redirect, render_template, request,
+                   send_from_directory, session, url_for)
 
 from app import db
 from app.models import Intake
+from app.pdf import generate_intake_pdf
 
 intake = Blueprint("intake", __name__)
 
@@ -179,6 +182,16 @@ def start():
     record = build_intake(data)
     db.session.add(record)
     db.session.commit()
+
+    # Build the PDF summary now that the intake has an ID. If ReportLab fails,
+    # the intake is still saved and the confirmation page just skips the button.
+    try:
+        record.pdf_filename = generate_intake_pdf(record, current_app.config["PDF_FOLDER"])
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("PDF generation failed for intake %s", record.intake_id)
+
     session["intake_submitted_id"] = record.intake_id
     return redirect(url_for("intake.submitted"))
 
@@ -196,4 +209,21 @@ def submitted():
     intake_id = session.get("intake_submitted_id")
     if intake_id is None:
         abort(404)
-    return render_template("intake/submitted.html", intake_id=intake_id)
+    record = db.session.get(Intake, intake_id)
+    has_pdf = bool(record and record.pdf_filename and
+                   os.path.exists(os.path.join(current_app.config["PDF_FOLDER"], record.pdf_filename)))
+    return render_template("intake/submitted.html", intake_id=intake_id, has_pdf=has_pdf)
+
+
+@intake.route("/intake/submitted/pdf")
+def download_pdf():
+    """Let the person who just submitted download their own PDF, and nobody else."""
+    intake_id = session.get("intake_submitted_id")
+    record = db.session.get(Intake, intake_id) if intake_id is not None else None
+    if record is None or not record.pdf_filename:
+        abort(404)
+    return send_from_directory(
+        current_app.config["PDF_FOLDER"], record.pdf_filename,
+        as_attachment=True, download_name=f"aplin-law-intake-{record.intake_id}.pdf",
+        mimetype="application/pdf", max_age=0,
+    )

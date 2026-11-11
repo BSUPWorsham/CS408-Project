@@ -7,8 +7,9 @@ STAFF_PASSWORD = "correct-horse-battery"
 
 
 @pytest.fixture
-def app():
+def app(tmp_path):
     app = create_app({
+        "PDF_FOLDER": str(tmp_path / "pdfs"),  # keep test PDFs out of app/static
         "TESTING": True,
         "SECRET_KEY": "test-key",
         "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",

@@ -10,6 +10,19 @@
 <section class="section">
     <div class="container">
         <div class="panel">
+            {% if has_pdf %}
+            <h2 class="h4"><i class="bi bi-file-earmark-pdf" aria-hidden="true"></i> Your intake summary</h2>
+            <p>Download a PDF copy of your answers to keep for your records.</p>
+            <a class="btn btn-cta" href="{{ url_for('intake.download_pdf') }}" download>
+                <i class="bi bi-download" aria-hidden="true"></i> Download PDF summary
+            </a>
+            {% else %}
+            <h2 class="h4">Your intake summary</h2>
+            <p class="mb-0">We saved your answers, but your PDF copy isn't ready. Our team still has everything
+                they need, and we can email you a copy when we contact you.</p>
+            {% endif %}
+        </div>
+        <div class="panel mt-4">
             <h2 class="h4">What happens next</h2>
             <ol class="mb-0">
                 <li>A member of our team reviews your answers.</li>
