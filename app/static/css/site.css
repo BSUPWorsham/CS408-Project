@@ -96,3 +96,20 @@ p, li { max-width: 68ch; }
   .intake-progress li.current .label { display: block; position: absolute; top: 2.5rem; white-space: nowrap; }
   .intake-progress { margin-bottom: 2.75rem; }
 }
+
+
+/* Staff dashboard */
+.stat-card { color: var(--ink); border-left-width: 5px; }
+.stat-card:hover, .stat-card.active { background: var(--mist); color: var(--spruce); }
+.stat-card.active { box-shadow: inset 0 0 0 2px var(--spruce); }
+.filter-panel { border-left-width: 1px; height: auto; }
+.table-responsive { position: relative; } /* keeps screen-reader-only text inside the scroll box on phones */
+.intake-table th { white-space: nowrap; }
+.status-badge { display: inline-block; padding: .2rem .6rem; border-radius: 999px; font-size: .85rem; font-weight: 700; border: 1px solid transparent; }
+.status-new { background: #FFF6E2; border-color: #E6C677; color: #6b4a07; }
+.status-in-review { background: #E3EEF6; border-color: #9BBAD1; color: #1f425a; }
+.status-contacted { background: var(--mist); border-color: #9fb8aa; color: var(--spruce); }
+.status-archived { background: #ECECEC; border-color: #c4c4c4; color: #4a4a4a; }
+.history-list li { border-left: 3px solid #b9c8bf; padding: 0 0 .9rem .9rem; }
+.history-list li:last-child { padding-bottom: 0; }
+.danger-panel { border-left-color: #b02a37; height: auto; }

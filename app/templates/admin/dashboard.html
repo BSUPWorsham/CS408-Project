@@ -2,26 +2,113 @@
 {% block title %}Staff Dashboard{% endblock %}
 {% block content %}
 <div class="page-header">
-  <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
-    <div>
-      <h1 class="mb-1">Staff dashboard</h1>
-      <p class="mb-0">Signed in as {{ user.full_name }} ({{ user.email }})</p>
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+            <h1 class="mb-1">Staff dashboard</h1>
+            <p class="mb-0">Signed in as {{ user.full_name }} ({{ user.email }})</p>
+        </div>
+        <form method="post" action="{{ url_for('auth.logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-outline-spruce" type="submit">Sign out</button>
+        </form>
     </div>
-    <form method="post" action="{{ url_for('auth.logout') }}">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <button class="btn btn-outline-spruce" type="submit">Sign out</button>
-    </form>
-  </div>
 </div>
+
 <section class="section">
-  <div class="container">
-    <h2 class="mb-3">Intakes by status</h2>
-    <div class="row g-3">
-      {% for status, count in status_counts %}
-      <div class="col-6 col-md-3"><div class="panel"><p class="mb-0">{{ status }}</p><p class="h2 mb-0">{{ count }}</p></div></div>
-      {% endfor %}
+    <div class="container">
+        <h2 class="h4 mb-3">Intakes by status</h2>
+        <div class="row g-3 mb-5">
+            {% for status, count in status_counts %}
+            <div class="col-6 col-md-3">
+                <a class="panel stat-card d-block text-decoration-none {{ 'active' if filters.status == status }}"
+                   href="{{ url_for('admin.dashboard', status=status) }}">
+                    <span class="d-block">{{ status }}</span>
+                    <span class="h2 mb-0 d-block">{{ count }}</span>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <form method="get" action="{{ url_for('admin.dashboard') }}" class="panel filter-panel mb-4" aria-labelledby="filter-heading">
+            <h2 class="h4" id="filter-heading">Filter intakes</h2>
+            <div class="row g-3 align-items-end">
+                <div class="col-12 col-sm-6 col-lg">
+                    <label class="form-label" for="status">Status</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">All statuses</option>
+                        {% for s in statuses %}<option value="{{ s }}" {{ 'selected' if filters.status == s }}>{{ s }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 col-sm-6 col-lg">
+                    <label class="form-label" for="age_category">Age category</label>
+                    <select class="form-select" id="age_category" name="age_category">
+                        <option value="">All age categories</option>
+                        {% for a in age_categories %}<option value="{{ a }}" {{ 'selected' if filters.age_category == a }}>{{ a }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <label class="form-label" for="start">From</label>
+                    <input class="form-control" type="date" id="start" name="start" value="{{ filters.start or '' }}">
+                </div>
+                <div class="col-6 col-lg-2">
+                    <label class="form-label" for="end">To</label>
+                    <input class="form-control" type="date" id="end" name="end" value="{{ filters.end or '' }}">
+                </div>
+                <div class="col-12 col-lg-auto d-flex gap-2">
+                    <button class="btn btn-cta flex-grow-1" type="submit">Apply</button>
+                    {% if is_filtered %}<a class="btn btn-outline-spruce" href="{{ url_for('admin.dashboard') }}">Clear</a>{% endif %}
+                </div>
+            </div>
+            <p class="form-text mb-0 mt-2">Dates are inclusive and use the submission date in UTC.</p>
+        </form>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-baseline mb-2">
+            <h2 class="h4 mb-0">Intakes</h2>
+            <p class="mb-0" role="status">
+                Showing {{ intakes|length }} of {{ total }} intake{{ '' if total == 1 else 's' }}{{ ' (filtered)' if is_filtered }}
+            </p>
+        </div>
+
+        {% if intakes %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle intake-table bg-white">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Client</th>
+                    <th scope="col">Age category</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Submitted (UTC)</th>
+                    <th scope="col"><span class="visually-hidden">Actions</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in intakes %}
+                <tr>
+                    <td>{{ i.intake_id }}</td>
+                    <td>
+                        <a href="{{ url_for('admin.intake_detail', intake_id=i.intake_id) }}" class="fw-bold">{{ i.client_name }}</a>
+                        <div class="small text-muted">{{ i.client_email }}</div>
+                    </td>
+                    <td>{{ i.age_category }}</td>
+                    <td><span class="status-badge status-{{ (i.status or 'New')|lower|replace(' ', '-') }}">{{ i.status or 'New' }}</span></td>
+                    <td>{{ i.submitted_at.strftime('%Y-%m-%d %H:%M') if i.submitted_at else '' }}</td>
+                    <td class="text-end text-nowrap">
+                        {% if i.pdf_filename %}
+                        <a href="{{ url_for('admin.intake_pdf', intake_id=i.intake_id) }}" class="me-2">
+                            <i class="bi bi-file-earmark-pdf" aria-hidden="true"></i> PDF<span class="visually-hidden"> for intake {{ i.intake_id }}</span>
+                        </a>
+                        {% endif %}
+                        <a href="{{ url_for('admin.intake_detail', intake_id=i.intake_id) }}">View<span class="visually-hidden"> intake {{ i.intake_id }}</span></a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="notice">{{ 'No intakes match these filters.' if is_filtered else 'No intakes have been submitted yet.' }}</p>
+        {% endif %}
     </div>
-    <p class="notice mt-4">Search, filters, status updates, and record deletion are added in the next checkpoint.</p>
-  </div>
 </section>
 {% endblock %}
